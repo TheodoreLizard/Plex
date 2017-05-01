@@ -123,16 +123,13 @@ type Playlists struct {
 }
 
 type SavedPlaylist struct {
-	XMLName xml.Name `xml:"Playlist"`
-	Title   string   `xml:"title,attr"`
-	// Key     string       `xml:"key,attr"`
-	Videos []SavedVideo `xml:"Video"`
+	XMLName xml.Name     `xml:"Playlist"`
+	Title   string       `xml:"title,attr"`
+	Videos  []SavedVideo `xml:"Video"`
 }
 
 type SavedVideo struct {
 	XMLName xml.Name `xml:"Video"`
 	Title   string   `xml:"title,attr"`
 	Year    string   `xml:"year,attr"`
-	// Key                string   `xml:"key,attr"`
-	// LibrarySectionUUID string   `xml:"librarySectionUUID,attr"`
 }

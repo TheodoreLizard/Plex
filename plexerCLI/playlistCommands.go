@@ -75,7 +75,6 @@ func getPlaylists() (plexAPI.Playlists, error) {
 	for _, pl := range mc.Playlists {
 		playList := plexAPI.SavedPlaylist{
 			Title: pl.Title,
-			// Key:   pl.Key,
 		}
 
 		mc, err = plexClient.Get(pl.Key)
@@ -84,16 +83,9 @@ func getPlaylists() (plexAPI.Playlists, error) {
 		}
 
 		for _, v := range mc.Videos {
-			// vmc, err := plexClient.Get(v.Key)
-			// if err != nil {
-			// 	return playlists, err
-			// }
-
 			video := plexAPI.SavedVideo{
 				Title: v.Title,
 				Year:  v.Year,
-				// Key:                v.Key,
-				// LibrarySectionUUID: vmc.LibrarySectionUUID,
 			}
 
 			playList.Videos = append(playList.Videos, video)
@@ -114,40 +106,9 @@ func restorePlaylists(playlists plexAPI.Playlists) error {
 			return err
 		}
 
-		// if pl.Key != playlist.Key {
-		// 	return fmt.Errorf("playlist key mismatch, saved: [%v], found: [%v]", pl.Key, playlist.Key)
-		// }
-
-		for _, v := range pl.Videos {
-			fmt.Printf("Restore %s to %s\n", v.Title, pl.Title)
-
-			videos, err := plexClient.SearchLocal(v.Title)
-			if err != nil {
-				return err
-			}
-
-			if len(videos) == 0 {
-				return fmt.Errorf("found %d videos matching title: %v", len(videos), v.Title)
-			}
-
-			for _, video := range videos {
-				if v.Title == video.Title && v.Year == video.Year {
-					videoURI := fmt.Sprintf("library://%s/item/%s", video.LibrarySectionUUID, video.Key)
-					request := fmt.Sprintf("%s?uri=%s", playlist.Key, url.QueryEscape(videoURI))
-
-					// fmt.Printf("%v\n", request)
-
-					mc, err := plexClient.Put(request)
-					if err != nil {
-						return err
-					}
-					if verbose {
-						logXML(mc)
-					}
-
-					break
-				}
-			}
+		err = restorePlaylist(plexClient, pl, playlist.Key)
+		if err != nil {
+			return err
 		}
 
 		err = organizePlaylist(plexClient, pl, playlist.Key)
@@ -159,7 +120,44 @@ func restorePlaylists(playlists plexAPI.Playlists) error {
 	return nil
 }
 
+func restorePlaylist(plexClient *plexAPI.PlexClient, playlist plexAPI.SavedPlaylist, playlistKey string) error {
+	fmt.Printf("Restore playlist %s\n", playlist.Title)
+
+	for _, v := range playlist.Videos {
+		fmt.Printf("	Restore %s\n", v.Title)
+
+		videos, err := plexClient.SearchLocal(v.Title)
+		if err != nil {
+			return err
+		}
+
+		if len(videos) == 0 {
+			return fmt.Errorf("found %d videos matching title: %v", len(videos), v.Title)
+		}
+
+		for _, video := range videos {
+			if v.Title == video.Title && v.Year == video.Year {
+				videoURI := fmt.Sprintf("library://%s/item/%s", video.LibrarySectionUUID, video.Key)
+				request := fmt.Sprintf("%s?uri=%s", playlistKey, url.QueryEscape(videoURI))
+
+				mc, err := plexClient.Put(request)
+				if err != nil {
+					return err
+				}
+				if verbose {
+					logXML(mc)
+				}
+
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 func organizePlaylist(plexClient *plexAPI.PlexClient, playlist plexAPI.SavedPlaylist, playlistKey string) error {
+	fmt.Printf("Organize playlist %s\n", playlist.Title)
 	mc, err := plexClient.Get(playlistKey)
 	if err != nil {
 		return err
@@ -167,7 +165,8 @@ func organizePlaylist(plexClient *plexAPI.PlexClient, playlist plexAPI.SavedPlay
 
 	var lastItemID string
 	for _, v := range playlist.Videos {
-		// Find video
+		fmt.Printf("	Position %s\n", v.Title)
+
 		for _, plv := range mc.Videos {
 			if v.Title == plv.Title && v.Year == plv.Year {
 				newItemID := plv.PlaylistItemID
