@@ -75,7 +75,7 @@ func getPlaylists() (plexAPI.Playlists, error) {
 	for _, pl := range mc.Playlists {
 		playList := plexAPI.SavedPlaylist{
 			Title: pl.Title,
-			Key:   pl.Key,
+			// Key:   pl.Key,
 		}
 
 		mc, err = plexClient.Get(pl.Key)
@@ -84,16 +84,16 @@ func getPlaylists() (plexAPI.Playlists, error) {
 		}
 
 		for _, v := range mc.Videos {
-			vmc, err := plexClient.Get(v.Key)
-			if err != nil {
-				return playlists, err
-			}
+			// vmc, err := plexClient.Get(v.Key)
+			// if err != nil {
+			// 	return playlists, err
+			// }
 
 			video := plexAPI.SavedVideo{
-				LibrarySectionUUID: vmc.LibrarySectionUUID,
-				Title:              v.Title,
-				Year:               v.Year,
-				Key:                v.Key,
+				Title: v.Title,
+				Year:  v.Year,
+				// Key:                v.Key,
+				// LibrarySectionUUID: vmc.LibrarySectionUUID,
 			}
 
 			playList.Videos = append(playList.Videos, video)
@@ -114,9 +114,9 @@ func restorePlaylists(playlists plexAPI.Playlists) error {
 			return err
 		}
 
-		if pl.Key != playlist.Key {
-			return fmt.Errorf("playlist key mismatch, saved: [%v], found: [%v]", pl.Key, playlist.Key)
-		}
+		// if pl.Key != playlist.Key {
+		// 	return fmt.Errorf("playlist key mismatch, saved: [%v], found: [%v]", pl.Key, playlist.Key)
+		// }
 
 		for _, v := range pl.Videos {
 			fmt.Printf("Restore %s to %s\n", v.Title, pl.Title)
@@ -147,6 +147,44 @@ func restorePlaylists(playlists plexAPI.Playlists) error {
 
 					break
 				}
+			}
+		}
+
+		err = organizePlaylist(plexClient, pl, playlist.Key)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func organizePlaylist(plexClient *plexAPI.PlexClient, playlist plexAPI.SavedPlaylist, playlistKey string) error {
+	mc, err := plexClient.Get(playlistKey)
+	if err != nil {
+		return err
+	}
+
+	var lastItemID string
+	for _, v := range playlist.Videos {
+		// Find video
+		for _, plv := range mc.Videos {
+			if v.Title == plv.Title && v.Year == plv.Year {
+				newItemID := plv.PlaylistItemID
+
+				request := playlistKey + "/" + newItemID + "/move"
+				if lastItemID != "" {
+					request = request + "?after=" + lastItemID
+				}
+				result, err := plexClient.Put(request)
+				if err != nil {
+					return err
+				}
+				if verbose {
+					logXML(result)
+				}
+
+				lastItemID = newItemID
 			}
 		}
 	}

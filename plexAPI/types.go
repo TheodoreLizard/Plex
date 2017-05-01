@@ -48,6 +48,7 @@ type Video struct {
 	XMLName               xml.Name `xml:"Video"`
 	Key                   string   `xml:"key,attr"`
 	GUID                  string   `xml:"guid,attr"`
+	ID                    string   `xml:"id,attr"`
 	Type                  string   `xml:"type,attr"`
 	Title                 string   `xml:"title,attr"`
 	Summary               string   `xml:"summary,attr"`
@@ -122,16 +123,16 @@ type Playlists struct {
 }
 
 type SavedPlaylist struct {
-	XMLName xml.Name     `xml:"Playlist"`
-	Title   string       `xml:"title,attr"`
-	Key     string       `xml:"key,attr"`
-	Videos  []SavedVideo `xml:"Video"`
+	XMLName xml.Name `xml:"Playlist"`
+	Title   string   `xml:"title,attr"`
+	// Key     string       `xml:"key,attr"`
+	Videos []SavedVideo `xml:"Video"`
 }
 
 type SavedVideo struct {
-	XMLName            xml.Name `xml:"Video"`
-	Title              string   `xml:"title,attr"`
-	Year               string   `xml:"year,attr"`
-	Key                string   `xml:"key,attr"`
-	LibrarySectionUUID string   `xml:"librarySectionUUID,attr"`
+	XMLName xml.Name `xml:"Video"`
+	Title   string   `xml:"title,attr"`
+	Year    string   `xml:"year,attr"`
+	// Key                string   `xml:"key,attr"`
+	// LibrarySectionUUID string   `xml:"librarySectionUUID,attr"`
 }
