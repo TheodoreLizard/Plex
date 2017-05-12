@@ -103,7 +103,10 @@ func restorePlaylists(playlists plexAPI.Playlists) error {
 	for _, pl := range playlists.Playlists {
 		playlist, err := plexClient.SearchPlaylist(pl.Title)
 		if err != nil {
-			return err
+			playlist, err = plexClient.CreatePlaylist(pl.Title)
+			if err != nil {
+				return err
+			}
 		}
 
 		err = restorePlaylist(plexClient, pl, playlist.Key)
@@ -126,30 +129,20 @@ func restorePlaylist(plexClient *plexAPI.PlexClient, playlist plexAPI.SavedPlayl
 	for _, v := range playlist.Videos {
 		fmt.Printf("	Restore %s\n", v.Title)
 
-		videos, err := plexClient.SearchLocal(v.Title)
+		video, err := plexClient.FindVideo(v)
 		if err != nil {
 			return err
 		}
 
-		if len(videos) == 0 {
-			return fmt.Errorf("found %d videos matching title: %v", len(videos), v.Title)
+		videoURI := fmt.Sprintf("library://%s/item/%s", video.LibrarySectionUUID, video.Key)
+		request := fmt.Sprintf("%s?uri=%s", playlistKey, url.QueryEscape(videoURI))
+
+		mc, err := plexClient.Put(request)
+		if err != nil {
+			return err
 		}
-
-		for _, video := range videos {
-			if v.Title == video.Title && v.Year == video.Year {
-				videoURI := fmt.Sprintf("library://%s/item/%s", video.LibrarySectionUUID, video.Key)
-				request := fmt.Sprintf("%s?uri=%s", playlistKey, url.QueryEscape(videoURI))
-
-				mc, err := plexClient.Put(request)
-				if err != nil {
-					return err
-				}
-				if verbose {
-					logXML(mc)
-				}
-
-				break
-			}
+		if verbose {
+			logXML(mc)
 		}
 	}
 
@@ -167,8 +160,13 @@ func organizePlaylist(plexClient *plexAPI.PlexClient, playlist plexAPI.SavedPlay
 	for _, v := range playlist.Videos {
 		fmt.Printf("	Position %s\n", v.Title)
 
+		video, err := plexClient.FindVideo(v)
+		if err != nil {
+			return err
+		}
+
 		for _, plv := range mc.Videos {
-			if v.Title == plv.Title && v.Year == plv.Year {
+			if video.Key == plv.Key {
 				newItemID := plv.PlaylistItemID
 
 				request := playlistKey + "/" + newItemID + "/move"
