@@ -6,14 +6,16 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type Client struct {
-	BaseURL *url.URL
-	client  *http.Client
+	BaseURL   *url.URL
+	plexToken string
+	client    *http.Client
 }
 
-func NewClient(host string) *Client {
+func NewClient(host string, plexToken string) *Client {
 	baseURL, err := url.Parse("http://" + host + ":32400")
 	if err != nil {
 		log.Fatal(err)
@@ -24,14 +26,20 @@ func NewClient(host string) *Client {
 	}
 
 	client := &Client{
-		BaseURL: baseURL,
-		client:  &http.Client{Transport: transportConfig},
+		BaseURL:   baseURL,
+		plexToken: plexToken,
+		client:    &http.Client{Transport: transportConfig},
 	}
 
 	return client
 }
 
 func (c *Client) newRequest(method string, path string, body io.Reader) (*http.Request, error) {
+	if strings.Contains(path, "?") {
+		path = path + "&X-Plex-Token=" + c.plexToken
+	} else {
+		path = path + "?X-Plex-Token=" + c.plexToken
+	}
 	relURL, err := url.Parse(path)
 	u := c.BaseURL.ResolveReference(relURL)
 	req, err := http.NewRequest(method, u.String(), body)

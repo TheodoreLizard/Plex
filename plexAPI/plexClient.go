@@ -11,8 +11,8 @@ type PlexClient struct {
 	httpClient *httpClient.Client
 }
 
-func NewPlexClient(host string) *PlexClient {
-	httpClient := httpClient.NewClient(host)
+func NewPlexClient(host string, token string) *PlexClient {
+	httpClient := httpClient.NewClient(host, token)
 
 	plexClient := &PlexClient{
 		httpClient: httpClient,

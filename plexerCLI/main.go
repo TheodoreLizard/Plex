@@ -15,7 +15,8 @@ const (
 )
 
 var (
-	plexAddr string
+	plexAddr  string
+	plexToken string
 )
 
 func main() {
@@ -33,6 +34,13 @@ func main() {
 			Usage:       "Plex IP Address",
 			Destination: &plexAddr,
 			EnvVar:      "PLEX_ADDR",
+		},
+		cli.StringFlag{
+			Name:        "token",
+			Value:       "",
+			Usage:       "Plex Token",
+			Destination: &plexToken,
+			EnvVar:      "PLEX_TOKEN",
 		},
 	}
 

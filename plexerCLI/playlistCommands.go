@@ -66,7 +66,7 @@ func restorePlaylistCommand() cli.Command {
 func getPlaylists() (plexAPI.Playlists, error) {
 	var playlists plexAPI.Playlists
 
-	plexClient := plexAPI.NewPlexClient(plexAddr)
+	plexClient := plexAPI.NewPlexClient(plexAddr, plexToken)
 	mc, err := plexClient.Get("playlists")
 	if err != nil {
 		return playlists, err
@@ -98,7 +98,7 @@ func getPlaylists() (plexAPI.Playlists, error) {
 }
 
 func restorePlaylists(playlists plexAPI.Playlists) error {
-	plexClient := plexAPI.NewPlexClient(plexAddr)
+	plexClient := plexAPI.NewPlexClient(plexAddr, plexToken)
 
 	for _, pl := range playlists.Playlists {
 		playlist, err := plexClient.SearchPlaylist(pl.Title)
