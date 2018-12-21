@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/url"
+	"strings"
 )
 
 type PlexClient struct {
@@ -132,7 +133,7 @@ func (pc *PlexClient) FindVideo(video SavedVideo) (Video, error) {
 	}
 
 	for _, v := range videos {
-		if v.Title == video.Title && (len(videos) == 1 || v.Year == video.Year) {
+		if strings.EqualFold(v.Title, video.Title) && (len(videos) == 1 || v.Year == video.Year) {
 			return v, nil
 		}
 	}
