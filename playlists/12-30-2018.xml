@@ -1,37 +1,4 @@
 <Playlists>
-	<Playlist title="Spielberg">
-		<Video title="1941" year="1979"></Video>
-		<Video title="A.I. Artificial Intelligence" year="2001"></Video>
-		<Video title="Always" year="1989"></Video>
-		<Video title="Amistad" year="1997"></Video>
-		<Video title="The BFG" year="2016"></Video>
-		<Video title="Bridge of Spies" year="2015"></Video>
-		<Video title="Catch Me If You Can" year="2002"></Video>
-		<Video title="Close Encounters of the Third Kind" year="1977"></Video>
-		<Video title="The Color Purple" year="1985"></Video>
-		<Video title="Duel" year="1971"></Video>
-		<Video title="E.T. the Extra-Terrestrial" year="1982"></Video>
-		<Video title="Empire of the Sun" year="1987"></Video>
-		<Video title="Hook" year="1991"></Video>
-		<Video title="Indiana Jones and the Kingdom of the Crystal Skull" year="2008"></Video>
-		<Video title="Indiana Jones and the Last Crusade" year="1989"></Video>
-		<Video title="Indiana Jones and the Temple of Doom" year="1984"></Video>
-		<Video title="Jaws" year="1975"></Video>
-		<Video title="Jurassic Park" year="1993"></Video>
-		<Video title="Lincoln" year="2012"></Video>
-		<Video title="The Lost World: Jurassic Park" year="1997"></Video>
-		<Video title="Minority Report" year="2002"></Video>
-		<Video title="Munich" year="2005"></Video>
-		<Video title="The Post" year="2017"></Video>
-		<Video title="Raiders of the Lost Ark" year="1981"></Video>
-		<Video title="Ready Player One" year="2018"></Video>
-		<Video title="Saving Private Ryan" year="1998"></Video>
-		<Video title="Schindler&#39;s List" year="1993"></Video>
-		<Video title="The Terminal" year="2004"></Video>
-		<Video title="Twilight Zone: The Movie" year="1983"></Video>
-		<Video title="War Horse" year="2012"></Video>
-		<Video title="War of the Worlds" year="2005"></Video>
-	</Playlist>
 	<Playlist title="50s Science Fiction">
 		<Video title="Rocketship X-M" year="1950"></Video>
 		<Video title="Destination Moon" year="1950"></Video>
